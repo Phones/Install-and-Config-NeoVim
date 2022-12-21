@@ -22,7 +22,7 @@ function update_system()
 {
     pwc "blue" "atualizando o sistema"
     sudo apt-get update -y
-    sudo apt-get upgrade -y
+    # sudo apt-get upgrade -y
 }
 # ----------------------------------------------------
 
@@ -35,6 +35,7 @@ function check_plug_file()
         wget -P $(pwd)/nvim/autoload/ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
     else
         pwd "yellow" "Vim Plug File Exist"
+    fi
 }
 #-----------------------------------------------------
 
@@ -42,7 +43,7 @@ pwc "blue" "Update System"
 update_system
 
 pwc "blue" "Install git and wget"
-sudo apt-get install git wget &>/dev/null
+sudo apt-get install wget &>/dev/null
 
 pwc "blue" "Download NeoVim"
 wget https://github.com/neovim/neovim/releases/download/nightly/nvim-linux64.deb
