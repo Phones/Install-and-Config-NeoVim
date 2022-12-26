@@ -8,6 +8,37 @@ YELLOW='\033[1;33m'
 NC='\033[0m'
 # -------------------
 
+# ---------------------------------- Script Progress Bar -------------------------------
+# Function progress bar code: https://www.baeldung.com/linux/command-line-progress-bar
+bar_size=40
+bar_char_done="#"
+bar_char_todo="-"
+bar_percentage_scale=2
+
+function show_progress {
+    current="$1"
+    total="$2"
+
+    # calculate the progress in percentage 
+    percent=$(bc <<< "scale=$bar_percentage_scale; 100 * $current / $total" )
+    # The number of done and todo characters
+    done=$(bc <<< "scale=0; $bar_size * $percent / 100" )
+    todo=$(bc <<< "scale=0; $bar_size - $done" )
+
+    # build the done and todo sub-bars
+    done_sub_bar=$(printf "%${done}s" | tr " " "${bar_char_done}")
+    todo_sub_bar=$(printf "%${todo}s" | tr " " "${bar_char_todo}")
+
+    # output the bar
+    echo -ne "\rScript Progress : [${done_sub_bar}${todo_sub_bar}] ${percent}%\n"
+
+    if [ $total -eq $current ]; then
+        echo -e "\nDONE"
+    fi
+    sleep 0.5
+}
+# --------------------------------------------------------------------------------------
+
 # ------------------  print with color -----------------------
 function pwc()
 {
@@ -20,8 +51,8 @@ function pwc()
 
 function update_system()
 {
-    pwc "blue" "atualizando o sistema"
-    sudo apt-get update -y
+    pwc "blue" "-------------- Update System ----------------"
+    sudo apt-get update -y &>/dev/null
     # sudo apt-get upgrade -y
 }
 # ----------------------------------------------------
@@ -39,25 +70,42 @@ function check_plug_file()
 }
 #-----------------------------------------------------
 
-pwc "blue" "Update System"
+
+clear
+show_progress 1 7
 update_system
 
-pwc "blue" "Install git and wget"
+clear
+pwc "blue" "------------ Install git and wget -----------"
+show_progress 2 7
 sudo apt-get install wget &>/dev/null
 
-pwc "blue" "Download NeoVim"
-wget https://github.com/neovim/neovim/releases/download/nightly/nvim-linux64.deb
+clear
+pwc "blue" "-------------- Download NeoVim --------------"
+wget https://github.com/neovim/neovim/releases/download/nightly/nvim-linux64.deb &>/dev/null
+show_progress 3 7
 
-pwc "blue" "Install NeoVim"
+clear
+pwc "blue" "-------------- Install NeoVim ---------------"
+show_progress 4 7
 sudo dpkg -i nvim-linux64.deb
 
-pwc "blue" "Download vim plug"
+clear
+pwc "blue" "------------ Download vim plug --------------"
+show_progress 5 7
 check_plug_file
 
-pwc "blue" "Copying the folder with Settings"
+clear
+pwc "blue" "------ Copying the folder with Settings------"
+show_progress 6 7
 cp -r nvim ~/.config
 
-pwc "blue" "Install NeoVim Plugins"
+clear
+pwc "blue" "---------- Install NeoVim Plugins -----------"
+show_progress 7 7
 nvim --headless +PlugInstall +qall
 
-pwc "green" "NeoVim Installed and configured successfully!!!"
+clear
+pwc "green" "==================================================="
+pwc "green" "| NeoVim Installed and configured successfully ✅ |"
+pwc "green" "==================================================="
