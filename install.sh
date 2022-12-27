@@ -59,11 +59,26 @@ function check_plug_file()
 {
     FILE_PATH=$(pwd)/nvim/autoload/plug.vim
     if ! test -f "$FILE_PATH"; then
-        pwd "yellow" "vim plug file does not exist, downloading"
+        pwc "yellow" "vim plug file does not exist, downloading"
         wget -P $(pwd)/nvim/autoload/ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
     else
-        pwd "yellow" "Vim Plug File Exist"
+        pwc "yellow" "Vim Plug File Exist"
     fi
+    sleep 1
+}
+#-----------------------------------------------------
+
+# --------------- Verify if nvim-linux64.deb exist -----------
+function check_nvim_installer_file()
+{
+    FILE_PATH=$(pwd)/nvim-linux64.deb
+    if ! test -f "$FILE_PATH"; then
+        pwc "yellow" "Nvim installer file does not exist, downloading"
+        wget https://github.com/neovim/neovim/releases/download/nightly/nvim-linux64.deb &>/dev/null
+    else 
+        pwc "yellow" "Nvim installer File Exist"
+    fi
+    sleep 1
 }
 #-----------------------------------------------------
 
@@ -86,35 +101,35 @@ function catch()
 
 function line-with_sleep()
 {
-    pwc "blue" "--------------------------------------------------------------------"
+    pwc "blue" "----------------------------------------------------------------------"
     sleep 0.5
 }
 
-function download_neo_vim()
+function install_prerequisites()
 {
-    sudo apt-get install wget &>/dev/null
-    wget https://github.com/neovim/neovim/releases/download/nightly/nvim-linux64.deb &>/dev/null
+    sudo apt-get install wget git python3 python3-pip python-is-python3 gcc g++ cmake
 }
 
 #------ Installation and configuration commands ------
 declare -a TEXT_NAME_COMANDS=(
-    "------------------------ Update System -----------------------------"
-    "-------------------------- install pynvim --------------------------"
-    "------------------------- Download NeoVim --------------------------"
-    "-------------------------- Install NeoVim --------------------------"
-    "------------------------ Download vim plug -------------------------"
-    "------------------ Copying the folder with Settings----------------"
-    "----------------------- Install NeoVim Plugins ---------------------"
+    "------------------ Update System -----------------------"
+    "--------------- install prerequisites ------------------"
+    "-------------------- install pynvim --------------------"
+    "------------------- Download NeoVim --------------------"
+    "-------------------- Install NeoVim --------------------"
+    "------------------ Download vim plug -------------------"
+    "------------ Copying the folder with Settings-----------"
+    "----------------- Install NeoVim Plugins ---------------"
 )
 
 declare -a ALL_COMANDS=(
     "update_system"
+    "install_prerequisites"
     "pip install pynvim"
-    "download_neo_vim"
+    "check_nvim_installer_file"
     "sudo dpkg -i nvim-linux64.deb"
     "check_plug_file"
     "cp -r nvim /home/$USER/.config/"
-    "pip install pynvim"
     "nvim --headless +PlugInstall +qall"
 )
 #-----------------------------------------------------
@@ -125,7 +140,7 @@ for ((i = 0; i < ${num_comands}; i++)); do
     try
     (
         clear
-        pwc "blue" "${TEXT_NAME_COMANDS[$i]}"
+        pwc "blue" "${TEXT_NAME_COMANDS[$i]}> Comand [$i/$num_comands]"
         show_progress $i $num_comands
         line-with_sleep
         ${ALL_COMANDS[$i]}
