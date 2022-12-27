@@ -110,16 +110,25 @@ function install_prerequisites()
     sudo apt-get install wget git python3 python3-pip python-is-python3 gcc g++ cmake
 }
 
+function delete_downloaded_files()
+{
+    vim_plug_path=$(pwd)/nvim/autoload/plug.vim
+    rm -rf $vim_plug_path
+    rm -rf nvim-linux64.deb
+}
+
+
 #------ Installation and configuration commands ------
 declare -a TEXT_NAME_COMANDS=(
     "------------------ Update System -----------------------"
-    "--------------- install prerequisites ------------------"
-    "-------------------- install pynvim --------------------"
+    "--------------- Install prerequisites ------------------"
+    "-------------------- Install pynvim --------------------"
     "------------------- Download NeoVim --------------------"
     "-------------------- Install NeoVim --------------------"
     "------------------ Download vim plug -------------------"
     "------------ Copying the folder with Settings-----------"
     "----------------- Install NeoVim Plugins ---------------"
+    "---------------- Delete downloaded files ---------------"
 )
 
 declare -a ALL_COMANDS=(
@@ -131,6 +140,7 @@ declare -a ALL_COMANDS=(
     "check_plug_file"
     "cp -r nvim /home/$USER/.config/"
     "nvim --headless +PlugInstall +qall"
+    "delete_downloaded_files"
 )
 #-----------------------------------------------------
 
