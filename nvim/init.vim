@@ -1,7 +1,7 @@
 call plug#begin()
 Plug 'scrooloose/nerdtree'
 Plug 'ghifarit53/tokyonight-vim'
-Plug 'valloric/youcompleteme'
+Plug 'ycm-core/YouCompleteMe', { 'do': './install.py --tern-completer' }
 call plug#end()
 
 

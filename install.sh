@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -i
 
 # ------ Colors ------
 BLUE='\033[0;34m'
@@ -30,12 +30,11 @@ function show_progress {
     todo_sub_bar=$(printf "%${todo}s" | tr " " "${bar_char_todo}")
 
     # output the bar
-    echo -ne "\e${YELLOW}\rScript Progress : [${done_sub_bar}${todo_sub_bar}] ${percent}%${NC}\n"
+    echo -ne "\e${YELLOW}\r  Script Progress: [${done_sub_bar}${todo_sub_bar}] ${percent}%${NC}\n"
 
     if [ $total -eq $current ]; then
         echo -e "\nDONE"
     fi
-    sleep 0.5
 }
 # --------------------------------------------------------------------------------------
 
@@ -80,57 +79,66 @@ function catch()
 {
     errorCode=$?
     if [ $errorCode -ne 0 ]; then
-    echo "Error in execute script!"
-    exit $errorCode
+        echo "Error in execute script!"
+        exit $errorCode
     fi
 }
 #-----------------------------------------------------
 
-function line-()
+function line-with_sleep()
 {
-    pwd "blue" "------------------------------------------------------------------"
+    pwc "blue" "--------------------------------------------------------------------"
+    sleep 0.5
 }
 
-try
-(
-    clear
-    pwc "blue" "-------------- Update System ----------------"
-    show_progress 1 7
-    update_system
-
-    clear
-    pwc "blue" "------------ Install git and wget -----------"
-    show_progress 2 7
+function download_neo_vim()
+{
     sudo apt-get install wget &>/dev/null
-
-    clear
-    pwc "blue" "-------------- Download NeoVim --------------"
     wget https://github.com/neovim/neovim/releases/download/nightly/nvim-linux64.deb &>/dev/null
-    show_progress 3 7
+}
 
-    clear
-    pwc "blue" "-------------- Install NeoVim ---------------"
-    show_progress 4 7
-    sudo dpkg -i nvim-linux64.deb
+function install_you_complete_me_plugin()
+{
+    sudo apt get install build-essential cmake vim-nox python3-dev
+}
 
-    clear
-    pwc "blue" "------------ Download vim plug --------------"
-    show_progress 5 7
-    check_plug_file
-
-    clear
-    pwc "blue" "------ Copying the folder with Settings------"
-    show_progress 6 7
-    cp -r nvim ~/.config
-
-    clear
-    pwc "blue" "---------- Install NeoVim Plugins -----------"
-    show_progress 7 7
-    nvim --headless +PlugInstall +qall
-
-    clear
-    pwc "green" "==================================================="
-    pwc "green" "| NeoVim Installed and configured successfully ✅ |"
-    pwc "green" "==================================================="
+#------ Installation and configuration commands ------
+declare -a TEXT_NAME_COMANDS=(
+    "------------------------ Update System -----------------------------"
+    "-------------------------- install pynvim --------------------------"
+    "------------------------- Download NeoVim --------------------------"
+    "-------------------------- Install NeoVim --------------------------"
+    "------------------------ Download vim plug -------------------------"
+    "------------------ Copying the folder with Settings----------------"
+    "----------------------- Install NeoVim Plugins ---------------------"
 )
-catch
+
+declare -a ALL_COMANDS=(
+    "update_system"
+    "pip install pynvim"
+    "download_neo_vim"
+    "sudo dpkg -i nvim-linux64.deb"
+    "check_plug_file"
+    "cp -r nvim .config"
+    "pip install pynvim"
+    "nvim --headless +PlugInstall +qall"
+)
+#-----------------------------------------------------
+
+num_comands=${#ALL_COMANDS[@]}
+pwc "green" "Num comands: ${num_comands}"
+for ((i = 0; i < ${num_comands}; i++)); do
+    try
+    (
+        clear
+        pwc "blue" "${TEXT_NAME_COMANDS[$i]}"
+        show_progress $i $num_comands
+        line-with_sleep
+        ${ALL_COMANDS[$i]}
+    )
+    catch
+done
+
+pwc "green" "==================================================="
+pwc "green" "| NeoVim Installed and configured successfully ✅ |"
+pwc "green" "==================================================="
