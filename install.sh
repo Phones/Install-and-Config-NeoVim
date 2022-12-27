@@ -29,11 +29,10 @@ function show_progress {
     done_sub_bar=$(printf "%${done}s" | tr " " "${bar_char_done}")
     todo_sub_bar=$(printf "%${todo}s" | tr " " "${bar_char_todo}")
 
-    # output the bar
-    echo -ne "\e${YELLOW}\r  Script Progress: [${done_sub_bar}${todo_sub_bar}] ${percent}%${NC}\n"
-
     if [ $total -eq $current ]; then
-        echo -e "\nDONE"
+        echo -ne "\e${GREEN}\r | Script Progress: [${done_sub_bar}${todo_sub_bar}] ${percent}% |${NC}\n"
+    else
+        echo -ne "\e${YELLOW}\r  Script Progress: [${done_sub_bar}${todo_sub_bar}] ${percent}%${NC}\n"
     fi
 }
 # --------------------------------------------------------------------------------------
@@ -97,11 +96,6 @@ function download_neo_vim()
     wget https://github.com/neovim/neovim/releases/download/nightly/nvim-linux64.deb &>/dev/null
 }
 
-function install_you_complete_me_plugin()
-{
-    sudo apt get install build-essential cmake vim-nox python3-dev
-}
-
 #------ Installation and configuration commands ------
 declare -a TEXT_NAME_COMANDS=(
     "------------------------ Update System -----------------------------"
@@ -119,7 +113,7 @@ declare -a ALL_COMANDS=(
     "download_neo_vim"
     "sudo dpkg -i nvim-linux64.deb"
     "check_plug_file"
-    "cp -r nvim .config"
+    "cp -r nvim /home/$USER/.config/"
     "pip install pynvim"
     "nvim --headless +PlugInstall +qall"
 )
@@ -139,6 +133,9 @@ for ((i = 0; i < ${num_comands}; i++)); do
     catch
 done
 
-pwc "green" "==================================================="
-pwc "green" "| NeoVim Installed and configured successfully ✅ |"
-pwc "green" "==================================================="
+clear
+pwc "green" "======================================================================="
+pwc "green" "|          ✅ NeoVim Installed and configured successfully ✅         |"
+pwc "green" "======================================================================="
+show_progress $num_comands $num_comands
+pwc "green" "======================================================================="
