@@ -117,9 +117,16 @@ function delete_downloaded_files()
     rm -rf nvim-linux64.deb
 }
 
+function clean_old_packages()
+{
+    sudo apt-get autoremove
+    sudo apt-get autoclean
+}
+
 
 #------ Installation and configuration commands ------
 declare -a TEXT_NAME_COMANDS=(
+    "-----------------Cleaning old packages -----------------"
     "------------------ Update System -----------------------"
     "--------------- Install prerequisites ------------------"
     "-------------------- Install pynvim --------------------"
@@ -132,6 +139,7 @@ declare -a TEXT_NAME_COMANDS=(
 )
 
 declare -a ALL_COMANDS=(
+    "clean_old_packages"
     "update_system"
     "install_prerequisites"
     "pip install pynvim"
