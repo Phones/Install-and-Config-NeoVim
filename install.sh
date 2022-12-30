@@ -119,26 +119,33 @@ function delete_downloaded_files()
 
 function clean_old_packages()
 {
-    sudo apt-get autoremove
-    sudo apt-get autoclean
+    sudo apt-get autoremove -y &>/dev/null
+    sudo apt-get autoclean -y &>/dev/null
 }
 
+function remove_old_neovim()
+{
+    sudo apt-get purge neovim -y &>/dev/null
+    sudo snap remove neovim &>/dev/null
+}
 
 #------ Installation and configuration commands ------
 declare -a TEXT_NAME_COMANDS=(
-    "-----------------Cleaning old packages -----------------"
-    "------------------ Update System -----------------------"
-    "--------------- Install prerequisites ------------------"
-    "-------------------- Install pynvim --------------------"
-    "------------------- Download NeoVim --------------------"
-    "-------------------- Install NeoVim --------------------"
-    "------------------ Download vim plug -------------------"
-    "------------ Copying the folder with Settings-----------"
-    "----------------- Install NeoVim Plugins ---------------"
-    "---------------- Delete downloaded files ---------------"
+    "------------------Removing old NeoVim --------------------"
+    "-----------------Cleaning old packages -------------------"
+    "------------------ Update System -------------------------"
+    "--------------- Install prerequisites --------------------"
+    "-------------------- Install pynvim ----------------------"
+    "------------------- Download NeoVim ----------------------"
+    "-------------------- Install NeoVim ----------------------"
+    "------------------ Download vim plug ---------------------"
+    "------------ Copying the folder with Settings-------------"
+    "----------------- Install NeoVim Plugins -----------------"
+    "---------------- Delete downloaded files -----------------"
 )
 
 declare -a ALL_COMANDS=(
+    "remove_old_neovim"
     "clean_old_packages"
     "update_system"
     "install_prerequisites"
@@ -158,7 +165,7 @@ for ((i = 0; i < ${num_comands}; i++)); do
     try
     (
         clear
-        pwc "blue" "${TEXT_NAME_COMANDS[$i]}> Comand [$i/$num_comands]"
+        pwc "blue" "${TEXT_NAME_COMANDS[$i]}> Step [$i/$num_comands]"
         show_progress $i $num_comands
         line-with_sleep
         ${ALL_COMANDS[$i]}
