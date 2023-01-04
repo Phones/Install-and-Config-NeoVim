@@ -10,6 +10,7 @@ Plug 'Xuyuanp/nerdtree-git-plugin' " Adiciona icons do git ao nerdtree
 Plug 'dense-analysis/ale'
 Plug 'neoclide/coc.nvim' , { 'branch' : 'release' }
 Plug 'honza/vim-snippets'
+Plug 'jiangmiao/auto-pairs'
 call plug#end()
 
 " -------------------------------- Global sets -----------------------------
