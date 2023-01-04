@@ -2,6 +2,8 @@ call plug#begin()
 Plug 'scrooloose/nerdtree'
 Plug 'ghifarit53/tokyonight-vim'
 Plug 'davidhalter/jedi-vim'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 call plug#end()
 
 " -------------------------------- Global sets -----------------------------
@@ -49,11 +51,14 @@ filetype indent on   " Load the indent file for the file type, if any
 
 " ---------------------------------------------------------------------------
 
-
+" -------------------------------- Themes ----------------------------------
+"   Thema e configurações do thema
 let g:tokyonight_style='night' " available: night, storm
 let g:tokyonight_enable_italic=1
-
 colorscheme tokyonight
+
+" ---------------------------------------------------------------------------
+
 
 
 
