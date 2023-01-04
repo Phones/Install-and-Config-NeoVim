@@ -11,6 +11,12 @@ Plug 'dense-analysis/ale'
 Plug 'neoclide/coc.nvim' , { 'branch' : 'release' }
 Plug 'honza/vim-snippets'
 Plug 'jiangmiao/auto-pairs'
+" -------- Faz a instalação desse plugin apenas para neovim -------------
+if (has("nvim"))
+    Plug 'nvim-lua/plenary.nvim'
+    Plug 'nvim-telescope/telescope.nvim'
+endif
+" -----------------------------------------------------------------------
 call plug#end()
 
 " -------------------------------- Global sets -----------------------------
@@ -93,6 +99,15 @@ let g:ale_fixers = {
 \}
 
 let g:ale_fix_on_save = 1
+" --------------------------------------------------------------------------------
+
+" ------------------------------ Telescope ---------------------------------------
+if (has("nvim"))
+    nnoremap <leader>ff <cmd>Telescope find_files<cr>
+    nnoremap <leader>fg <cmd>Telescope live_grep<cr>
+    nnoremap <leader>fb <cmd>Telescope buffers<cr>
+    nnoremap <leader>fh <cmd>Telescope help_tags<cr>
+endif
 " --------------------------------------------------------------------------------
 
 " ----------------------- COC (Conquer of Completion) ----------------------------
