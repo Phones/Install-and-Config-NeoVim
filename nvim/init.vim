@@ -7,6 +7,7 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'ryanoasis/vim-devicons' " Instala conjutno de icones de DEV
 Plug 'sheerun/vim-polyglot' " Habilita o highlight para infinidade de lingagens
 Plug 'Xuyuanp/nerdtree-git-plugin' " Adiciona icons do git ao nerdtree
+Plug 'dense-analysis/ale'
 call plug#end()
 
 " -------------------------------- Global sets -----------------------------
@@ -79,7 +80,17 @@ let g:airline_powerline_fonts = 1 " Usa a nerdfonts como caracteres
 nmap <C-a> :NERDTreeToggle<CR> " Seta o control + a para abrir fechar o nerdtree
 " --------------------------------------------------------------------------------
 
+" -------------------------------- Nerd Tree -------------------------------------
+"   Ferramente para configurar linters e fixers
+let g:ale_linters = {
+\}
 
+let g:ale_fixers = {
+\   '*': ['trim_whitespace'],
+\}
+
+let g:ale_fix_on_save = 1
+" --------------------------------------------------------------------------------
 
 " Referencias
 " https://www.manualdocodigo.com.br/vim-basico/
