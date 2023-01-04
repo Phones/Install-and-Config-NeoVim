@@ -296,6 +296,7 @@ nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 " ----------------------------------------------------------------------------------------------------------------------
 
 " --------------------------------------- Coc Explorer -----------------------------------
+:nnoremap <space>e :CocCommand explorer<CR>
 
 let g:coc_explorer_global_presets = {
 \   '.vim': {
