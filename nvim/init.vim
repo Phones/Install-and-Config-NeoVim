@@ -6,7 +6,6 @@ Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'ryanoasis/vim-devicons' " Instala conjutno de icones de DEV
 Plug 'sheerun/vim-polyglot' " Habilita o highlight para infinidade de lingagens
-Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 Plug 'Xuyuanp/nerdtree-git-plugin' " Adiciona icons do git ao nerdtree
 call plug#end()
 
