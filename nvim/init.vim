@@ -2,8 +2,9 @@ call plug#begin()
 Plug 'scrooloose/nerdtree'
 Plug 'ghifarit53/tokyonight-vim'
 Plug 'davidhalter/jedi-vim'
-Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline' 
 Plug 'vim-airline/vim-airline-themes'
+Plug 'ryanoasis/vim-devicons' " Instala conjutno de icones de DEV
 call plug#end()
 
 " -------------------------------- Global sets -----------------------------
@@ -59,7 +60,12 @@ colorscheme tokyonight
 
 " ---------------------------------------------------------------------------
 
+" -------------------------------- Airline ----------------------------------
+"   Configurações do Airline
+let g:airline#extensions#tabline#enabled = 1 "Habilita os buffers para ficar como abas em cima, como os arquivos abertos no vscode
+let g:airline_powerline_fonts = 1 " Usa a nerdfonts como caracteres
 
+" ---------------------------------------------------------------------------
 
 
 " Referencias
