@@ -62,6 +62,25 @@ map <C-j> <C-w>j " Para baixo
 map <C-k> <C-w>k " Para cima
 map <C-l> <C-w>l " direita
 
+" Cria uma nova aba
+nmap te :tabe<CR>
+
+" Navigate between buffers
+nmap ty :bn<CR>
+nmap tr :bp<CR>
+
+" Delete a buffer
+nmap td :bd<CR>
+
+" Create splits
+nmap th :split<CR>
+nmap tv :vsplit<CR>
+
+" Close splits and others
+nmap tt :q<CR>
+
+" Call command shortcut
+nmap tc :!
 " ---------------------------------------------------------------------------
 
 " ---------------------------- Auto Comandos --------------------------------
