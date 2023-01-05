@@ -85,7 +85,16 @@ nmap tc :!
 
 " ---------------------------- Auto Comandos --------------------------------
 "   Comandos que são executados automaticamente quando acontece uma ação
+" Quando selecionar uma palavra, ele marca todas as palavras iguais
+function! HighlightWordUnderCursor()
+    if getline(".")[col(".")-1] !~# '[[:punct:][:blank:]]'
+        exec 'match' 'Search' '/\V\<'.expand('<cword>').'\>/'
+    else
+        match none
+    endif
+endfunction
 
+autocmd! CursorHold,CursorHoldI * call HighlightWordUnderCursor()
 " ---------------------------------------------------------------------------
 
 " -------------------------------- Themes ----------------------------------
