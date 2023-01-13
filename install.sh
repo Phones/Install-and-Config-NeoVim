@@ -127,6 +127,14 @@ function remove_old_neovim()
 {
     sudo apt-get purge neovim -y &>/dev/null
     sudo snap remove neovim &>/dev/null
+    
+    read -p "Do you want to backup your nvim folder?[y/n] " backup_nvim
+    backup_nvim=${backup_nvim^^}
+    if [ $backup_nvim = "N" ]; then
+        rm -rf /home/$USER/.config/nvim
+    else
+        mv /home/$USER/.config/nvim /home/$USER/.config/nvim.backup
+    fi
 }
 
 #------ Installation and configuration commands ------
@@ -158,6 +166,8 @@ declare -a ALL_COMANDS=(
     "delete_downloaded_files"
 )
 #-----------------------------------------------------
+
+
 
 num_comands=${#ALL_COMANDS[@]}
 pwc "green" "Num comands: ${num_comands}"
