@@ -137,9 +137,43 @@ function remove_old_neovim()
     fi
 }
 
+function install_nodejs()
+{
+    sudo apt-get purge nodejs -y &>/dev/null
+    curl -sL https://deb.nodesource.com/setup_18.x | sudo -E bash - 
+    sudo apt install -y nodejs
+}
+
+
+function check_and_install_nodejs()
+{
+    # check nodejs exist
+    if node --version >/dev/null 2>&1; then
+        #check nodejs version
+        nodejs_version=$(node --version)
+        required_version="v16.0.0"
+
+        pwc "blue" "Node exist! Node version: $nodejs_version"
+        printf -v versions '%s\n%s' "$nodejs_version" "$required_version"
+        if [[ $versions = "$(sort -V <<< "$versions")" ]]; then
+            pwc "blue" "Removing old nodejs and install new version" 
+            sudo apt-get purge node
+            install_nodejs
+        else
+            pwc "green" "Node version found already meets the requirements"
+        fi
+    else
+        pwc "green" "installing node js"
+        install_nodejs
+    fi
+    # for the user to see the prints
+    sleep 2
+}
+
 #------ Installation and configuration commands ------
 declare -a TEXT_NAME_COMANDS=(
     "------------------Removing old NeoVim --------------------"
+    "------------------ check and install nodejs --------------"
     "-----------------Cleaning old packages -------------------"
     "------------------ Update System -------------------------"
     "--------------- Install prerequisites --------------------"
@@ -154,6 +188,7 @@ declare -a TEXT_NAME_COMANDS=(
 
 declare -a ALL_COMANDS=(
     "remove_old_neovim"
+    "check_and_install_nodejs"
     "clean_old_packages"
     "update_system"
     "install_prerequisites"
@@ -166,7 +201,6 @@ declare -a ALL_COMANDS=(
     "delete_downloaded_files"
 )
 #-----------------------------------------------------
-
 
 
 num_comands=${#ALL_COMANDS[@]}
