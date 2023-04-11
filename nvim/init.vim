@@ -2,12 +2,12 @@ call plug#begin()
 Plug 'scrooloose/nerdtree'
 Plug 'ghifarit53/tokyonight-vim'
 Plug 'davidhalter/jedi-vim'
-Plug 'vim-airline/vim-airline' 
+Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'ryanoasis/vim-devicons' " Instala conjutno de icones de DEV
 Plug 'sheerun/vim-polyglot' " Habilita o highlight para infinidade de lingagens
 Plug 'Xuyuanp/nerdtree-git-plugin' " Adiciona icons do git ao nerdtree
-Plug 'dense-analysis/ale'
+"Plug 'dense-analysis/ale'
 Plug 'neoclide/coc.nvim' , { 'branch' : 'release' }
 Plug 'honza/vim-snippets'
 Plug 'jiangmiao/auto-pairs'
@@ -24,7 +24,7 @@ call plug#end()
 "Para melhorar scroll, habilitar mouse, configurar tab, etc
 syntax enable
 set number
-" ---------------- Config Tab Spaces----------
+" ---------------- Config Tab Spaces ----------
 set tabstop=4        "Set tab to 4 spaces
 set softtabstop=4    " Show existing tab with 4 spaces width
 set shiftwidth=4     " When indenting with '>', use 4 spaces width
@@ -37,23 +37,27 @@ set smartcase        " Consider case if there is a upper case character
 set scrolloff=8      " Quantidade de linhas que v'ao ficar acima e abaixo do cursor enquanto scroola
 "  set colorcolumn=100  " Draws a line at the given line to keep aware of the line size
 set signcolumn=yes   " Add a column on the left. Useful for linting
-set cmdheight=2      " Numero da quantidade de linhas na parte de comandos. Util para quando aparece mensagem de erro muito grandes
 set updatetime=100   " Time in miliseconds to consider the changes
 set encoding=utf-8   " The encoding should be utf-8 to activate the font icons
 set nobackup         " No backup files
 set nowritebackup    " No backup files
 set splitright       " Create the vertical splits to the right
 set splitbelow       " Create the horizontal splits below
+set equalalways      " garante que as janelas sejam divididas igualmente em tamanho
+set cmdheight=2      " aumenta a altura do prompt do terminal para 2 linhas. Tbm é util quando tem uma mensagem de erro de grande
 set autoread         " Update vim after file update from outsid
-set relativenumber
+" set relativenumber
 set background=dark
 set mouse=a
 set termguicolors
+highlight Terminal ctermbg=black guibg=black
+set guifont=Monospace\ 10
+set clipboard+=unnamed
 filetype on          " Detect and set the filetype option and trigger the FileType Event
 filetype plugin on   " Load the plugin file for the file type, if any
 filetype indent on   " Load the indent file for the file type, if any
 " ---------------------------------------------------------------------------
-
+set clipboard=unnamedplus
 " -------------------------------- Remaps ----------------------------------
 "   Mapeamento de atalhos de teclado
 " Shortcuts for split navigation
@@ -81,7 +85,65 @@ nmap tt :q<CR>
 
 " Call command shortcut
 nmap tc :!
-" ---------------------------------------------------------------------------
+
+" Remap para fazer o control + a. Seleciona todo o arquivo
+nnoremap <c-a> <esc>ggVG<cr>
+
+" Map <C-s> to save the current file
+nnoremap <C-s> <esc>:w<CR>
+inoremap <C-s> <Esc>:w<CR>a
+" Configuração do atalho para abrir um terminal e posicioná-lo à direita
+nnoremap <leader>t :vsplit %<CR>:terminal<CR>
+" Faz com que o cursor passe para o final da linha de cima, quando chegar no
+" comeco da linha
+:inoremap <expr> <Left>  col('.') == 1 ? '<Up><End>' : '<Left>'
+" Mapeia Shift + Tab para voltar as tabulações no mode de inserção
+"inoremap <S-Tab> <C-d>
+" Mapeia Shift + Tab para voltar as tabulações no modo normal
+"nnoremap <S-Tab> <<
+" Navega para o split da direita
+nnoremap <C-Right> <C-w>l
+inoremap <C-Right> <Esc><C-w>l i
+
+
+" Navega para o split da esquerda
+nnoremap <C-Left> <C-\><C-n><C-w>h
+inoremap <C-Left> <C-\><C-n><C-w>h i
+" --------------------------------------------------------------------------
+
+" ---------------------------- Functions ----------------------------------------
+" Função que possibilita comentar e descomentar uma trecho de codigo
+" selecionado
+function! CommentLines()
+    let comment_character = ''
+    let uncomment_regex = ''
+    if &filetype == 'python'
+        let comment_character = '#'
+        let uncomment_regex = '^\s*# '
+    elseif &filetype == 'c' || &filetype == 'cpp'
+        let comment_character = '//'
+        let uncomment_regex = '^\s*\/\/ '  " adicione a barra invertida aqui
+    endif
+
+    let uncomment = 0
+    let lines = getline("'<", "'>")
+    for line in lines
+        if line =~ uncomment_regex
+            let uncomment = 1
+            break
+        endif
+    endfor
+
+    " Adiciona ou remove os comentários
+    if uncomment
+        silent! execute ":'<,'>s/".uncomment_regex."//"
+    else
+        silent! execute ":'<,'>s,^,".comment_character." ,"
+    endif
+endfunction
+
+vnoremap <silent> <leader>/ :<C-u>call CommentLines()<CR>
+" ------------------------------------------------------------------------------
 
 " ---------------------------- Auto Comandos --------------------------------
 "   Comandos que são executados automaticamente quando acontece uma ação
@@ -95,6 +157,18 @@ function! HighlightWordUnderCursor()
 endfunction
 
 autocmd! CursorHold,CursorHoldI * call HighlightWordUnderCursor()
+
+" Muda o formato do cursor para um cursor de texto quando o mouse passa sobre o texto
+"Copy code
+let &t_SI .= "\<Esc>[5 q"
+let &t_SR .= "\<Esc>[4 q"
+let &t_EI .= "\<Esc>[1 q"
+"
+augroup mySettings
+  autocmd!
+  autocmd InsertEnter * set cul
+  autocmd InsertLeave * set nocul
+augroup END
 " ---------------------------------------------------------------------------
 
 " -------------------------------- Themes ----------------------------------
@@ -114,19 +188,19 @@ let g:airline_powerline_fonts = 1 " Usa a nerdfonts como caracteres
 
 " -------------------------------- Nerd Tree -------------------------------------
 "   Configurações do Nerd Tree
-nmap <C-a> :NERDTreeToggle<CR> " Seta o control + a para abrir fechar o nerdtree
+nmap <C-t> :NERDTreeToggle<CR> " Seta o control + t para abrir fechar o nerdtree
 " --------------------------------------------------------------------------------
 
 " -------------------------------- Nerd Tree -------------------------------------
 "   Ferramente para configurar linters e fixers
-let g:ale_linters = {
-\}
+" let g:ale_linters = {
+"\}
 
-let g:ale_fixers = {
-\   '*': ['trim_whitespace'],
-\}
+"let g:ale_fixers = {
+"\   '*': ['trim_whitespace'],
+"\}
 
-let g:ale_fix_on_save = 1
+"let g:ale_fix_on_save = 1
 " --------------------------------------------------------------------------------
 
 " ------------------------------ Telescope ---------------------------------------
@@ -269,8 +343,8 @@ endif
 
 " Use CTRL-S for selections ranges
 " Requires 'textDocument/selectionRange' support of language server
-nmap <silent> <C-s> <Plug>(coc-range-select)
-xmap <silent> <C-s> <Plug>(coc-range-select)
+"nmap <silent> <C-s> <Plug>(coc-range-select)
+"xmap <silent> <C-s> <Plug>(coc-range-select)
 
 " Add `:Format` command to format current buffer
 command! -nargs=0 Format :call CocActionAsync('format')
@@ -307,36 +381,6 @@ nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 
 " ------------------------------------------------ Coc Snippets ----------------------------------------------------
 
-" Use <C-l> for trigger snippet expand.
-    imap <C-l> <Plug>(coc-snippets-expand)
-
-    " Use <C-j> for select text for visual placeholder of snippet.
-    vmap <C-j> <Plug>(coc-snippets-select)
-    
-    " Use <C-j> for jump to next placeholder, it's default of coc.nvim
-    let g:coc_snippet_next = '<c-j>'
-    
-    " Use <C-k> for jump to previous placeholder, it's default of coc.nvim
-    let g:coc_snippet_prev = '<c-k>'
-    
-    " Use <C-j> for both expand and jump (make expand higher priority.)
-    imap <C-j> <Plug>(coc-snippets-expand-jump)
-    
-    " Use <leader>x for convert visual selected code to snippet
-    xmap <leader>x  <Plug>(coc-convert-snippet)
-    
-    inoremap <silent><expr> <TAB>
-          \ pumvisible() ? coc#_select_confirm() :
-          \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
-          \ <SID>check_back_space() ? "\<TAB>" :
-          \ coc#refresh()
-    
-    function! s:check_back_space() abort
-      let col = col('.') - 1
-      return !col || getline('.')[col - 1]  =~# '\s'
-    endfunction
-    
-    let g:coc_snippet_next = '<tab>'
 " ----------------------------------------------------------------------------------------------------------------------
 
 " --------------------------------------- Coc Explorer -----------------------------------
