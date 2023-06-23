@@ -11,6 +11,10 @@ Plug 'Xuyuanp/nerdtree-git-plugin' " Adiciona icons do git ao nerdtree
 Plug 'neoclide/coc.nvim' , { 'branch' : 'release' }
 Plug 'honza/vim-snippets'
 Plug 'jiangmiao/auto-pairs'
+" Plug 'neovim/nvim-lspconfig'
+" Plug 'Xuyuanp/scrollbar.nvim'
+Plug 'dstein64/nvim-scrollview'
+Plug 'lervag/vimtex'
 " -------- Faz a instalação desse plugin apenas para neovim -------------
 if (has("nvim"))
     Plug 'nvim-lua/plenary.nvim'
@@ -18,12 +22,16 @@ if (has("nvim"))
 endif
 " -----------------------------------------------------------------------
 call plug#end()
-
+set noshowmode
+set noruler
 " -------------------------------- Global sets -----------------------------
 "   Conjunto de configurações de sets de configurações.
 "Para melhorar scroll, habilitar mouse, configurar tab, etc
 syntax enable
 set number
+" Use apenas o registro interno (unnamed) para operações de área de transferência
+set clipboard=unnamed
+set guioptions-=a
 " ---------------- Config Tab Spaces ----------
 set tabstop=4        "Set tab to 4 spaces
 set softtabstop=4    " Show existing tab with 4 spaces width
@@ -92,8 +100,10 @@ nnoremap <c-a> <esc>ggVG<cr>
 " Map <C-s> to save the current file
 nnoremap <C-s> <esc>:w<CR>
 inoremap <C-s> <Esc>:w<CR>a
-" Configuração do atalho para abrir um terminal e posicioná-lo à direita
+
+" " Configuração do atalho para abrir um terminal e posicioná-lo à direita
 nnoremap <leader>t :vsplit %<CR>:terminal<CR>
+
 " Faz com que o cursor passe para o final da linha de cima, quando chegar no
 " comeco da linha
 :inoremap <expr> <Left>  col('.') == 1 ? '<Up><End>' : '<Left>'
@@ -109,7 +119,107 @@ inoremap <C-Right> <Esc><C-w>l i
 " Navega para o split da esquerda
 nnoremap <C-Left> <C-\><C-n><C-w>h
 inoremap <C-Left> <C-\><C-n><C-w>h i
+
+" Navega para o split da esquerda
+nnoremap <C-Left> <C-\><C-n><C-w>h
+inoremap <C-Left> <C-\><C-n><C-w>h i
+
+" Navega para o split de baixo
+nnoremap <C-Down> <C-w>j
+inoremap <C-Down> <C-o><C-w>j
+
+" Navega para o split de cima
+nnoremap <C-Up> <C-w>k
+inoremap <C-Up> <C-o><C-w>k
+
+
+" Seleciona a linha atual inteira e cola o conteudo selecionado na area de
+" transferiencia do modo insert
+" nnoremap <C-l> :<C-u>normal! V<CR>
+" inoremap <C-l> <C-r>+
+nnoremap <C-l> :<C-u>normal! V<CR>
+" inoremap <C-l> <C-r>+
+
+" Mapear Control + C para copiar e Control + V para colar
+" Control + C
+nnoremap <C-c> "+y
+vnoremap <C-c> "+y
+inoremap <C-c> <C-\><C-n>"+y
+
+" Control + V
+nnoremap <C-v> "+p
+vnoremap <C-v> "+p
+inoremap <C-v> <C-\><C-n>"+p
+
+" Mapeia o atalho Ctrl+X para recortar no modo visual e normal
+vnoremap <C-x> "+d
+nnoremap <C-x> "+d
+
+" Mapeamento de teclas para substituição global
+nnoremap <C-f> :set hlsearch<CR> :%s///gc<Left><Left><Left>
+" Mapeamento de teclas para substituição global com destaque de palavras
+" nnoremap <C-f> :set hlsearch<CR>:%s/\<<C-r><C-w>\>/&/gc<Left><Left><Left>
+
+" Mapear Ctrl + l para selecionar toda a linha em todos os modos
+noremap <C-l> V
+xnoremap <C-l> V
+onoremap <C-l> V
+inoremap <C-l> <C-o>V
+
+
+" Mapeia o comando Control + Z para desfazer no modo normal e de inserção
+nnoremap <C-z> u
+inoremap <C-z> <C-o>u
+
+
+" Mapeia o comando Control + Y para refazer no modo normal e de inserção
+nnoremap <C-y> <C-r>
+inoremap <C-y> <C-o><C-r>
+
+
+" Mapeia o comando Control + D para excluir a palavra sob o cursor no modo normal
+nnoremap <C-d> diw
+inoremap <C-d> <C-o>diw
 " --------------------------------------------------------------------------
+
+" ---------------------------- Barra de scroll para o neovim ----------------
+" augroup ScrollbarInit
+"   autocmd!
+"   autocmd CursorMoved,VimResized,QuitPre * silent! lua require('scrollbar').show()
+"   autocmd WinEnter,FocusGained           * silent! lua require('scrollbar').show()
+"   autocmd WinLeave,BufLeave,BufWinLeave,FocusLost            * silent! lua require('scrollbar').clear()
+" augroup end
+
+let g:scrollview_excluded_filetypes = ['nerdtree']
+let g:scrollview_current_only = v:true
+let g:scrollview_winblend = 75
+" Position the scrollbar at the 80th character of the buffer
+let g:scrollview_base = 'buffer'
+let g:scrollview_column = 80
+" Enable all sign groups (defaults to ['diagnostics', 'search']).
+" Set to the empty list to disable all sign groups.
+" let g:scrollview_signs_on_startup = ['all']
+
+" Show diagnostic signs only for errors.
+let g:scrollview_diagnostics_severities =
+      \ [luaeval('vim.diagnostic.severity.ERROR')]
+
+" Define a barra para ficar a direita
+let g:scrollview_base = 'right'
+let g:scrollview_column = 1
+
+" Habilita o mouse para a barra
+let g:scrollview_auto_mouse = 1
+
+"Define a opacidade e cor da barra
+let g:scrollview_winblend = 0
+highlight ScrollView guibg=red
+let g:scrollview_winhighlight = 'ScrollView'
+"---------------------------------------------------------------------------
+
+
+" ---------------------------- Minimizar contexto de funcao ----------------
+"---------------------------------------------------------------------------
 
 " ---------------------------- Functions ----------------------------------------
 " Função que possibilita comentar e descomentar uma trecho de codigo
@@ -169,6 +279,7 @@ augroup mySettings
   autocmd InsertEnter * set cul
   autocmd InsertLeave * set nocul
 augroup END
+
 " ---------------------------------------------------------------------------
 
 " -------------------------------- Themes ----------------------------------
@@ -205,7 +316,8 @@ nmap <C-t> :NERDTreeToggle<CR> " Seta o control + t para abrir fechar o nerdtree
 
 " ------------------------------ Telescope ---------------------------------------
 if (has("nvim"))
-    nnoremap <leader>ff <cmd>Telescope find_files<cr>
+    " Configuração do Telescope para buscar arquivos com Control + F
+    nnoremap <C-p> :Telescope find_files<CR>
     nnoremap <leader>fg <cmd>Telescope live_grep<cr>
     nnoremap <leader>fb <cmd>Telescope buffers<cr>
     nnoremap <leader>fh <cmd>Telescope help_tags<cr>
@@ -332,14 +444,14 @@ xmap ac <Plug>(coc-classobj-a)
 omap ac <Plug>(coc-classobj-a)
 
 " Remap <C-f> and <C-b> to scroll float windows/popups
-if has('nvim-0.4.0') || has('patch-8.2.0750')
-  nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
-  nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
-  inoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
-  inoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
-  vnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
-  vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
-endif
+" if has('nvim-0.4.0') || has('patch-8.2.0750')
+"   nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+"   nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+"   inoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
+"   inoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
+"   vnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+"   vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+" endif
 
 " Use CTRL-S for selections ranges
 " Requires 'textDocument/selectionRange' support of language server
@@ -438,8 +550,15 @@ nnoremap <space>eb :CocCommand explorer --preset buffer<CR>
 
 " List all presets
 nnoremap <space>el :CocList explPresets
+" Configuração do Coc Explorer com ícones
+let g:coc_explorer_disable_nerdfonts = 0
+let g:coc_explorer_icon_enable_nerdfont = 1
 " ----------------------------------------------------------------------------------------
 
+
+" Desativa os :format :x :s do clangd
+let g:clangd_diagnostic_virtual_text = 0
+let g:coc_diagnostic_virtual_text = 0
 
 " Referencias
 " https://www.manualdocodigo.com.br/vim-basico/
