@@ -15,7 +15,6 @@ Plug 'jiangmiao/auto-pairs'
 " Plug 'Xuyuanp/scrollbar.nvim'
 Plug 'dstein64/nvim-scrollview'
 Plug 'lervag/vimtex'
-Plug 'ivan-krukov/vim-ipython'
 " -------- Faz a instalação desse plugin apenas para neovim -------------
 if (has("nvim"))
     Plug 'nvim-lua/plenary.nvim'
@@ -62,7 +61,6 @@ set termguicolors
 highlight Terminal ctermbg=black guibg=black
 set guifont=Monospace\ 10
 set clipboard+=unnamed
-set clipboard-=autoselect
 filetype on          " Detect and set the filetype option and trigger the FileType Event
 filetype plugin on   " Load the plugin file for the file type, if any
 filetype indent on   " Load the indent file for the file type, if any
@@ -105,8 +103,6 @@ inoremap <C-s> <Esc>:w<CR>a
 
 " " Configuração do atalho para abrir um terminal e posicioná-lo à direita
 nnoremap <leader>t :vsplit %<CR>:terminal<CR>
-inoremap <leader>t <C-o>:vsplit %<CR><C-o>:terminal<CR>
-
 
 " Faz com que o cursor passe para o final da linha de cima, quando chegar no
 " comeco da linha
